@@ -16,11 +16,6 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    // Gönderen ve alıcıya göre geçmiş mesajları getir
-    public List<Message> getMessageHistory(String sender, String recipient) {
-        return messageRepository.findBySenderAndRecipientOrderByTimestampAsc(sender, recipient);
-    }
-
     // Yeni mesaj gönder
     public Message sendMessage(Message message) {
         message.setTimestamp(LocalDateTime.now()); // Zaman bilgisini ekle

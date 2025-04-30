@@ -43,4 +43,33 @@ public class JwtUtil {
                 .signWith(secretKey)
                 .compact();
     }
+
+    // extractUsername metodunu ekliyoruz
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey) // Aynı secret key ile doğrulama yapıyoruz
+                .build()
+                .parseClaimsJws(token) // JWT token'ı çöz
+                .getBody()
+                .getSubject(); // Token'in subject'ini (yani e-posta) döndür
+    }
+
+    // Token'in geçerliliğini kontrol et
+    public boolean isTokenValid(String token, User user) {
+        return (user.getEmail().equals(extractUsername(token)) && !isTokenExpired(token));
+    }
+
+    // Token'in geçerlilik süresi
+    public boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
 }

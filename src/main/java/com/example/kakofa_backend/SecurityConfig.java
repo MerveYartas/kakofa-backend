@@ -10,8 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+//import org.springframework.web.servlet.config.annotation.CorsRegistry;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -50,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/users/register")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/doctors")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/analysis/upload", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/analysis/test")).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless auth (JWT için)
@@ -63,17 +65,17 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") // React uygulamanızın adresi
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
-    }
+    // @Bean
+    // public WebMvcConfigurer corsConfigurer() {
+    // return new WebMvcConfigurer() {
+    // @Override
+    // public void addCorsMappings(CorsRegistry registry) {
+    // registry.addMapping("/**")
+    // .allowedOrigins("http://localhost:3000") // React uygulamanızın adresi
+    // .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+    // .allowedHeaders("*")
+    // .allowCredentials(true);
+    // }
+    // };
+    // }
 }

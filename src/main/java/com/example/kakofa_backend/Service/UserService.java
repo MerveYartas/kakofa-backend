@@ -29,4 +29,9 @@ public class UserService {
     public List<User> getDoctors() {
         return userRepository.findByIsDoctorTrue(); // Doktorları getir
     }
+
+    // E-posta adresine göre kullanıcıyı sorgulama
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
