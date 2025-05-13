@@ -43,23 +43,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF'yi devre dışı bırak (React ile kullanırken genellikle gerekmez)
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> {
-                }) // CORS ayarları
+                })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/api/users/register")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/doctors")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/analysis/upload", "POST")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/analysis/test")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll() // ✅ WebSocket endpoint izni
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless auth (JWT için)
-                )
-                .httpBasic(httpBasic -> httpBasic.disable()) // Basic Auth'u devre dışı bırak
-                .formLogin(form -> form.disable()) // Form tabanlı login'i kapat
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
                 .logout(logout -> logout
-                        .logoutUrl("/api/users/logout") // Çıkış için özel bir URL belirle
+                        .logoutUrl("/api/users/logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"));
         return http.build();

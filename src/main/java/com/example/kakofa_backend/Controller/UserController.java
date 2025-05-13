@@ -18,6 +18,8 @@ import com.example.kakofa_backend.Model.User;
 import com.example.kakofa_backend.Repository.UserRepository;
 import com.example.kakofa_backend.Service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/users")
@@ -83,6 +85,38 @@ public class UserController {
             return ResponseEntity.ok(new LoginResponse(jwtToken, foundUser, isDoctor));
         } else {
             return ResponseEntity.status(401).body("Email veya şifre hatalı.");
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        // Kullanıcıyı ID'ye göre veritabanında bul
+        Optional<User> foundUserOptional = userRepository.findById(id);
+
+        if (foundUserOptional.isPresent()) {
+            User foundUser = foundUserOptional.get();
+
+            // Kullanıcı bilgilerini güncelle
+            foundUser.setFirstname(updatedUser.getFirstname());
+            foundUser.setLastname(updatedUser.getLastname());
+            foundUser.setEmail(updatedUser.getEmail());
+
+            // Şifreyi yalnızca şifre değişikliği varsa güncelle
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                foundUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+
+            // Doktor ise uzmanlık alanını güncelle
+            if (updatedUser.getIsDoctor()) {
+                foundUser.setBranch(updatedUser.getBranch());
+            }
+
+            // Güncellenmiş kullanıcıyı veritabanına kaydet
+            userRepository.save(foundUser);
+
+            return ResponseEntity.ok("Kullanıcı başarıyla güncellendi.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kullanıcı bulunamadı.");
         }
     }
 
