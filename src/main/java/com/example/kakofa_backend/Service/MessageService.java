@@ -23,8 +23,12 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
-    public List<Message> getConversation(String user1, String user2) {
-        return messageRepository.findBySenderAndRecipientOrRecipientAndSenderOrderByTimestampAsc(
-                user1, user2, user1, user2);
+    public List<Message> getConversation(String sender, String recipient) {
+        return messageRepository.findBySenderAndRecipient(sender, recipient);
     }
+
+    public boolean hasUnreadMessages(String userEmail) {
+        return messageRepository.existsByRecipientAndIsReadFalse(userEmail);
+    }
+
 }

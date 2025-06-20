@@ -2,6 +2,7 @@ package com.example.kakofa_backend;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,9 +51,13 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/users/register")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/users/doctors")).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/messages/send").authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/api/analysis/upload", "POST")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/analysis/test")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll() // ✅ WebSocket endpoint izni
+                        .requestMatchers(new AntPathRequestMatcher("/api/doctors/me")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/doctor-posts/doctor/**", "POST"))
+                        .authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
